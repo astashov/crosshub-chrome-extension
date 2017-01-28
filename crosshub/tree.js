@@ -1,10 +1,10 @@
 (function () {
-  window.CrosstsTree = function (github) {
+  window.CrosshubTree = function (github) {
     this.github = github;
     this.handledLines = [];
   };
 
-  window.CrosstsTree.prototype.applyJson = function (json) {
+  window.CrosshubTree.prototype.applyJson = function (json) {
     var path = this.github.path.path;
     var allEntities = json[path];
     if (allEntities) {

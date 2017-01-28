@@ -7,13 +7,13 @@ function Tooltip(link, options) {
   var self = this;
 
   self.tooltip = document.createElement("div");
-  self.tooltip.className = "crossts-tooltip";
+  self.tooltip.className = "crosshub-tooltip";
   self.arrowContainer = document.createElement("div");
-  self.arrowContainer.className = "crossts-tooltip--arrow-container";
+  self.arrowContainer.className = "crosshub-tooltip--arrow-container";
   self.arrow = document.createElement("div");
-  self.arrow.className = "crossts-tooltip--arrow";
+  self.arrow.className = "crosshub-tooltip--arrow";
   self.container = document.createElement("div");
-  self.container.className = "crossts-tooltip--container";
+  self.container.className = "crosshub-tooltip--container";
   self.tooltip.appendChild(self.arrowContainer);
   self.arrowContainer.appendChild(self.arrow);
   self.tooltip.appendChild(self.container);

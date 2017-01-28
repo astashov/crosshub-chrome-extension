@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "CrossTS Chrome Extension",
+  "name": "CrossHub Chrome Extension",
   "version": "0.1.0",
 
   "description": "Adds 'Go to definition' and 'Find Usages' functionality to TypeScript projects on Github",
@@ -33,11 +33,11 @@
         "github.js",
         "github/tree_path.js",
         "github/pull_path.js",
-        "crossts/pull.js",
-        "crossts/tree.js",
+        "crosshub/pull.js",
+        "crosshub/tree.js",
         "location_change_detector.js",
-        "crossts.js"
+        "crosshub.js"
       ],
-      "css": ["crossts.css", "tooltip.css"]
+      "css": ["crosshub.css", "tooltip.css"]
   }]
 }

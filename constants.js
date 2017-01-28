@@ -1,4 +1,4 @@
-var PREFIX = 'crossts';
+var PREFIX = 'crosshub';
 var EVENT = {
-  LOCATION_CHANGE: 'crossts:location'
+  LOCATION_CHANGE: 'crosshub:location'
 };

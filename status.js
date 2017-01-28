@@ -2,16 +2,16 @@
   var refStatuses = []; // [{ref: null, status: null}, {ref: null, status: null}];
 
   function showStatus(content, showSpinner) {
-    var element = document.querySelector("#crossts-status");
+    var element = document.querySelector("#crosshub-status");
     if (!element) {
       element = document.createElement("div");
       element.setAttribute("style",
         "position: fixed; top: 10px; right: 10px; width: 26em; padding: 1em 1.8em; background: #fefefe; " +
         "border: #C7786C 1px solid; z-index: 999; color: #666; " +
         "text-align: left; font-size: 12px; min-height: 50px;");
-      element.setAttribute("id", "crossts-status");
+      element.setAttribute("id", "crosshub-status");
       var contents = document.createElement("div");
-      contents.setAttribute("class", "crossts-status-contents");
+      contents.setAttribute("class", "crosshub-status-contents");
       element.appendChild(contents);
       contents.innerHTML = content;
       document.querySelector("body").appendChild(element);
@@ -24,12 +24,12 @@
       close.textContent = "X";
       element.appendChild(close);
     } else {
-      element.querySelector(".crossts-status-contents").innerHTML = content;
+      element.querySelector(".crosshub-status-contents").innerHTML = content;
     }
-    var spinner = element.querySelector(".crossts-loader");
+    var spinner = element.querySelector(".crosshub-loader");
     if (showSpinner && !spinner) {
       spinner = document.createElement("div");
-      spinner.setAttribute("class", "crossts-loader");
+      spinner.setAttribute("class", "crosshub-loader");
       element.appendChild(spinner);
     } else if (!showSpinner && spinner) {
       spinner.parentNode.removeChild(spinner);
@@ -40,7 +40,7 @@
     var status;
     if (refStatus.status === "error") {
       var github = new Github();
-      var url = "https://www.crossts.info/metadata/" + github.basePath + "/" + refStatus.ref + "/log.txt";
+      var url = "https://www.crosshub.info/metadata/" + github.basePath + "/" + refStatus.ref + "/log.txt";
       status = "<a href='" + url + "'>" + refStatus.status + "</a>";
     } else {
       status = refStatus.status;
@@ -59,7 +59,7 @@
         message.push(statusMessage(refStatuses[1]));
       }
       if (message.length === 0 || ((!refStatuses[0] || refStatuses[0].status === "done") && (!refStatuses[1] || refStatuses[1].status === "done"))) {
-        var element = document.querySelector("#crossts-status");
+        var element = document.querySelector("#crosshub-status");
         if (element) {
           element.parentNode.removeChild(element);
         }

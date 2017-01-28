@@ -51,7 +51,7 @@ function groupEntitiesByLinesAndTypes(allEntities) {
 }
 
 function applyEntities(github, ref, content, entities, hrefCallback) {
-  if (content.indexOf("crossts-link") === -1) {
+  if (content.indexOf("crosshub-link") === -1) {
     var newLineContent = "";
     var lastStop = 0;
     for (var index in entities) {
@@ -62,11 +62,11 @@ function applyEntities(github, ref, content, entities, hrefCallback) {
         if (entity.type == "references") {
           var href = hrefCallback(entity);
           var isInternal = href.match(/^#/) || href.match(new RegExp(location.pathname));
-          var cssClass = "crossts-link" + (!isInternal ? ' crossts-link__external' : '');
+          var cssClass = "crosshub-link" + (!isInternal ? ' crosshub-link__external' : '');
           newLineContent += "<a href='" + href + "' class='" + cssClass + "'>";
         } else if (entity.type == "declarations") {
           var references = JSON.stringify(entity.references);
-          newLineContent += "<span class='crossts-declaration' data-references='" + references + "' data-ref='" + ref + "'>";
+          newLineContent += "<span class='crosshub-declaration' data-references='" + references + "' data-ref='" + ref + "'>";
         }
         var end = entity.offset + entity.length;
         var realEnd = getRealOffset(content, end);

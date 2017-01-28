@@ -1,45 +1,45 @@
 (function () {
-  function applyTreeCrossts(github, crosstsBaseUrl, crossts) {
+  function applyTreeCrosshub(github, crosshubBaseUrl, crosshub) {
     github.path.getRealRef(function (ref) {
-      var crosstsUrl = Path.join([crosstsBaseUrl, ref, "crossts.json"]);
-      Request.getJson(crosstsUrl, function (json) {
-        crossts.applyJson(json);
+      var crosshubUrl = Path.join([crosshubBaseUrl, ref, "crosshub.json"]);
+      Request.getJson(crosshubUrl, function (json) {
+        crosshub.applyJson(json);
       }, Errors.showUrlError);
     }, Errors.showTokenError);
   }
 
-  function applyPullSplitCrossts(github, crosstsBaseUrl, crossts) {
+  function applyPullSplitCrosshub(github, crosshubBaseUrl, crosshub) {
     github.path.getRealRefs(function (refs, repoNames) {
       var oldRef = refs[0];
       var newRef = refs[1];
-      var crosstsUrlOld = Path.join([crosstsBaseUrl, oldRef, "crossts.json"]);
-      Request.getJson(crosstsUrlOld, function (oldJson) {
-        crossts.applyJson(CROSSDART_PULL_OLD, oldJson, oldRef);
+      var crosshubUrlOld = Path.join([crosshubBaseUrl, oldRef, "crosshub.json"]);
+      Request.getJson(crosshubUrlOld, function (oldJson) {
+        crosshub.applyJson(CROSSDART_PULL_OLD, oldJson, oldRef);
       }, Errors.showUrlError);
-      var crosstsUrlNew = Path.join([crosstsBaseUrl, newRef, "crossts.json"]);
-      Request.getJson(crosstsUrlNew, function (newJson) {
-        crossts.applyJson(CROSSDART_PULL_NEW, newJson, newRef);
+      var crosshubUrlNew = Path.join([crosshubBaseUrl, newRef, "crosshub.json"]);
+      Request.getJson(crosshubUrlNew, function (newJson) {
+        crosshub.applyJson(CROSSDART_PULL_NEW, newJson, newRef);
       }, Errors.showUrlError);
     }, Errors.showTokenError);
   }
 
-  function applyPullUnifiedCrossts(github, crosstsBaseUrl, crossts) {
+  function applyPullUnifiedCrosshub(github, crosshubBaseUrl, crosshub) {
     github.path.getRealRefs(function (refs, repoNames) {
       var oldRef = refs[0];
       var newRef = refs[1];
-      var crosstsUrlOld = Path.join([crosstsBaseUrl, oldRef, "crossts.json"]);
-      Request.getJson(crosstsUrlOld, function (oldJson) {
-        crossts.applyJson(CROSSDART_PULL_OLD, oldJson, oldRef);
+      var crosshubUrlOld = Path.join([crosshubBaseUrl, oldRef, "crosshub.json"]);
+      Request.getJson(crosshubUrlOld, function (oldJson) {
+        crosshub.applyJson(CROSSDART_PULL_OLD, oldJson, oldRef);
       }, Errors.showUrlError);
-      var crosstsUrlNew = Path.join([crosstsBaseUrl, newRef, "crossts.json"]);
-      Request.getJson(crosstsUrlNew, function (newJson) {
-        crossts.applyJson(CROSSDART_PULL_NEW, newJson, newRef);
+      var crosshubUrlNew = Path.join([crosshubBaseUrl, newRef, "crosshub.json"]);
+      Request.getJson(crosshubUrlNew, function (newJson) {
+        crosshub.applyJson(CROSSDART_PULL_NEW, newJson, newRef);
       }, Errors.showUrlError);
     }, Errors.showTokenError);
   }
 
   function checkRef(index, github, baseUrl, ref, repoName, callback) {
-    var url = baseUrl + repoName + "/" + ref + "/crossts.json";
+    var url = baseUrl + repoName + "/" + ref + "/crosshub.json";
     Request.head(url, function () {
       Status.show(index, ref, "done");
       callback();
@@ -53,7 +53,7 @@
           }, 1000);
         }
       }, function () {
-        Request.post("https://metadata.crossts.info/analyze", {
+        Request.post("https://metadata.crosshub.info/analyze", {
           url: "https://github.com/" + repoName,
           sha: ref,
           token: Github.token
@@ -66,21 +66,21 @@
     });
   }
 
-  function fetchMetadataUrl(shouldReuseCrossts) {
+  function fetchMetadataUrl(shouldReuseCrosshub) {
     var github = new Github();
-    var baseUrl = "https://www.crossts.info/metadata/";
+    var baseUrl = "https://www.crosshub.info/metadata/";
     if (github.type === Github.PULL_REQUEST) {
       github.path.getRealRefs(function (refs, repoNames) {
         var isOneDone = false;
         checkRef(0, github, baseUrl, refs[0], repoNames[0], function () {
           if (isOneDone) {
-            applyCrossts(baseUrl, shouldReuseCrossts);
+            applyCrosshub(baseUrl, shouldReuseCrosshub);
           }
           isOneDone = true;
         });
         checkRef(1, github, baseUrl, refs[1], repoNames[1], function () {
           if (isOneDone) {
-            applyCrossts(baseUrl, shouldReuseCrossts);
+            applyCrosshub(baseUrl, shouldReuseCrosshub);
           }
           isOneDone = true;
         });
@@ -88,54 +88,54 @@
     } else {
       github.path.getRealRef(function (ref) {
         checkRef(0, github, baseUrl, ref, github.basePath, function () {
-          applyCrossts(baseUrl, shouldReuseCrossts);
+          applyCrosshub(baseUrl, shouldReuseCrosshub);
         });
       });
     }
   }
 
-  var crossts;
-  function applyCrossts(crosstsBaseUrl, shouldReuseCrossts) {
+  var crosshub;
+  function applyCrosshub(crosshubBaseUrl, shouldReuseCrosshub) {
     if (enabled) {
-      if (!crosstsBaseUrl || crosstsBaseUrl.toString().trim() === "") {
+      if (!crosshubBaseUrl || crosshubBaseUrl.toString().trim() === "") {
         fetchMetadataUrl();
       } else {
         var github = new Github();
         if (Github.isTree()) {
-          if (!shouldReuseCrossts || !crossts) {
-            crossts = new CrosstsTree(github);
+          if (!shouldReuseCrosshub || !crosshub) {
+            crosshub = new CrosshubTree(github);
           }
-          applyTreeCrossts(github, crosstsBaseUrl, crossts);
+          applyTreeCrosshub(github, crosshubBaseUrl, crosshub);
         } else if (Github.isPullSplit()) {
-          if (!shouldReuseCrossts || !crossts) {
-            crossts = new CrosstsPullSplit(github);
+          if (!shouldReuseCrosshub || !crosshub) {
+            crosshub = new CrosshubPullSplit(github);
           }
-          applyPullSplitCrossts(github, crosstsBaseUrl, crossts);
+          applyPullSplitCrosshub(github, crosshubBaseUrl, crosshub);
         } else if (Github.isPullUnified()) {
-          if (!shouldReuseCrossts || !crossts) {
-            crossts = new CrosstsPullUnified(github);
+          if (!shouldReuseCrosshub || !crosshub) {
+            crosshub = new CrosshubPullUnified(github);
           }
-          applyPullUnifiedCrossts(github, crosstsBaseUrl, crossts);
+          applyPullUnifiedCrosshub(github, crosshubBaseUrl, crosshub);
         }
       }
     }
   }
 
-  chrome.extension.sendMessage({crossts: {action: 'initPopup'}});
+  chrome.extension.sendMessage({crosshub: {action: 'initPopup'}});
 
   var jsonUrl;
   var enabled;
   chrome.runtime.onMessage.addListener(function (request) {
-    if (request.crossts) {
-      if (request.crossts.action === 'popupInitialized' || request.crossts.action === 'apply') {
-        window.Github.token = request.crossts.token;
-        jsonUrl = request.crossts.jsonUrl;
-        enabled = request.crossts.enabled;
+    if (request.crosshub) {
+      if (request.crosshub.action === 'popupInitialized' || request.crosshub.action === 'apply') {
+        window.Github.token = request.crosshub.token;
+        jsonUrl = request.crosshub.jsonUrl;
+        enabled = request.crosshub.enabled;
         if (enabled) {
-          applyCrossts(jsonUrl, request.crossts.action === 'apply');
+          applyCrosshub(jsonUrl, request.crosshub.action === 'apply');
         }
-      } else if (request.crossts.action === 'tokenLink') {
-        location.href = request.crossts.url;
+      } else if (request.crosshub.action === 'tokenLink') {
+        location.href = request.crosshub.url;
       }
     }
   });
@@ -147,7 +147,7 @@
     condition = condition || (oldPath !== newPath && Path.isTree(newPath));
     condition = condition || (!Path.isPull(oldPath) && Path.isPull(newPath));
     if (condition) {
-      applyCrossts(jsonUrl);
+      applyCrosshub(jsonUrl);
     }
   });
 
@@ -155,7 +155,7 @@
     var className = e.target.className;
     if (className.includes("octicon-unfold") || className.includes("diff-expander")) {
       setTimeout(function () {
-        applyCrossts(jsonUrl, true);
+        applyCrosshub(jsonUrl, true);
       }, 500);
     }
   });
@@ -185,9 +185,9 @@
     var references = JSON.parse(element.attributes["data-references"].value);
     var ref = element.attributes["data-ref"].value;
     var div = document.createElement("div");
-    div.className = "crossts-declaration--contents";
+    div.className = "crosshub-declaration--contents";
     var label = document.createElement("div");
-    label.className = "crossts-declaration--contents--label";
+    label.className = "crosshub-declaration--contents--label";
     label.appendChild(document.createTextNode("Usages:"));
     div.appendChild(label);
     var ul = document.createElement("ul");
@@ -206,7 +206,7 @@
 
   function findDeclarationElement(element) {
     while (element.parentNode != null) {
-      if (element.className.indexOf("crossts-declaration") !== -1) {
+      if (element.className.indexOf("crosshub-declaration") !== -1) {
         return element;
       }
       element = element.parentNode;
