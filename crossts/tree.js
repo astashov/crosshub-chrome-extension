@@ -1,10 +1,10 @@
 (function () {
-  window.CrossdartTree = function (github) {
+  window.CrosstsTree = function (github) {
     this.github = github;
     this.handledLines = [];
   };
 
-  window.CrossdartTree.prototype.applyJson = function (json) {
+  window.CrosstsTree.prototype.applyJson = function (json) {
     var path = this.github.path.path;
     var allEntities = json[path];
     if (allEntities) {
@@ -16,10 +16,13 @@
             return a.offset - b.offset;
           });
           var that = this;
-          var newContent = applyEntities(this.github, this.github.path.ref, getLineContent(line), entities, function (entity) {
-            return new TreePath(that.github, that.github.path.ref, entity.remotePath).absolutePath();
-          });
-          setLineContent(line, newContent);
+          var content = getLineContent(line);
+          if (content != null) {
+            var newContent = applyEntities(this.github, this.github.path.ref, content, entities, function (entity) {
+              return new TreePath(that.github, that.github.path.ref, entity.remotePath).absolutePath();
+            });
+            setLineContent(line, newContent);
+          }
           this.handledLines.push(line);
         }
       }
@@ -31,7 +34,8 @@
   }
 
   function getLineContent(line) {
-    return getLineElement(line).innerHTML;
+    const lineElement = getLineElement(line);
+    return lineElement && lineElement.innerHTML;
   }
 
   function setLineContent(line, content) {

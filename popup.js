@@ -18,7 +18,7 @@ button.addEventListener("click", function () {
 var tokenLink = document.querySelector("#token-link");
 tokenLink.addEventListener("click", function () {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {crossdart: {action: "tokenLink", url: tokenLink.attributes.href.value}});
+    chrome.tabs.sendMessage(tabs[0].id, {crossts: {action: "tokenLink", url: tokenLink.attributes.href.value}});
   });
   return false;
 });
@@ -48,15 +48,15 @@ function setEnabledToLocalStorage(value) {
 }
 
 function getTokenKey() {
-  return basePath + '/crossdartToken';
+  return basePath + '/crosstsToken';
 }
 
 function getUrlKey() {
-  return basePath + '/crossdartUrl';
+  return basePath + '/crosstsUrl';
 }
 
 function getEnabledKey() {
-  return basePath + '/crossdartEnabled';
+  return basePath + '/crosstsEnabled';
 }
 
 function getTokenFromLocalStorage() {
@@ -94,7 +94,7 @@ function sendApplyMessage(id) {
   var token = getTokenFromLocalStorage();
   var url = getUrlFromLocalStorage();
   var enabled = getEnabledFromLocalStorage();
-  chrome.tabs.sendMessage(id, {crossdart: {action: "apply", jsonUrl: url, token: token, enabled: enabled}});
+  chrome.tabs.sendMessage(id, {crossts: {action: "apply", jsonUrl: url, token: token, enabled: enabled}});
 }
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -103,6 +103,6 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
   setTokenFieldValue();
   setUrlFieldValue();
   setEnabledFieldValue();
-  var urlInfo = document.querySelector(".crossdart-url--info");
+  var urlInfo = document.querySelector(".crossts-url--info");
   urlInfo.innerHTML = urlInfo.innerHTML + " " + window.Errors.URL_HELP;
 });

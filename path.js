@@ -16,7 +16,7 @@ Path = {
   },
 
   isTree: function (path) {
-    return path.match(/^\/[^\/]+\/[^\/]+\/blob\/[^\/]+\/lib\/(.*)$/);
+    return path.match(/^\/[^\/]+\/[^\/]+\/blob\/[^\/]+\/(.*)$/);
   },
 
   isPull: function (path) {

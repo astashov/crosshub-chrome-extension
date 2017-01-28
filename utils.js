@@ -51,31 +51,33 @@ function groupEntitiesByLinesAndTypes(allEntities) {
 }
 
 function applyEntities(github, ref, content, entities, hrefCallback) {
-  if (content.indexOf("crossdart-link") === -1) {
+  if (content.indexOf("crossts-link") === -1) {
     var newLineContent = "";
     var lastStop = 0;
     for (var index in entities) {
       var entity = entities[index];
       var realOffset = getRealOffset(content, entity.offset);
-      newLineContent += content.substr(lastStop, realOffset - lastStop);
-      if (entity.type == "references") {
-        var href = hrefCallback(entity);
-        var isInternal = href.match(/^#/) || href.match(new RegExp(location.pathname));
-        var cssClass = "crossdart-link" + (!isInternal ? ' crossdart-link__external' : '');
-        newLineContent += "<a href='" + href + "' class='" + cssClass + "'>";
-      } else if (entity.type == "declarations") {
-        var references = JSON.stringify(entity.references);
-        newLineContent += "<span class='crossdart-declaration' data-references='" + references + "' data-ref='" + ref + "'>";
+      if (realOffset >= lastStop) {
+        newLineContent += content.substr(lastStop, realOffset - lastStop);
+        if (entity.type == "references") {
+          var href = hrefCallback(entity);
+          var isInternal = href.match(/^#/) || href.match(new RegExp(location.pathname));
+          var cssClass = "crossts-link" + (!isInternal ? ' crossts-link__external' : '');
+          newLineContent += "<a href='" + href + "' class='" + cssClass + "'>";
+        } else if (entity.type == "declarations") {
+          var references = JSON.stringify(entity.references);
+          newLineContent += "<span class='crossts-declaration' data-references='" + references + "' data-ref='" + ref + "'>";
+        }
+        var end = entity.offset + entity.length;
+        var realEnd = getRealOffset(content, end);
+        newLineContent += content.substr(realOffset, realEnd - realOffset);
+        if (entity.type == "references") {
+          newLineContent += "</a>";
+        } else if (entity.type == "declarations") {
+          newLineContent += "</span>";
+        }
+        lastStop = realEnd;
       }
-      var end = entity.offset + entity.length;
-      var realEnd = getRealOffset(content, end);
-      newLineContent += content.substr(realOffset, realEnd - realOffset);
-      if (entity.type == "references") {
-        newLineContent += "</a>";
-      } else if (entity.type == "declarations") {
-        newLineContent += "</span>";
-      }
-      lastStop = realEnd;
     }
     var lastEntity = entities[entities.length - 1];
     var lastEnd = lastEntity.offset + lastEntity.length;

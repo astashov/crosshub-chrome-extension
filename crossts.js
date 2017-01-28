@@ -1,49 +1,45 @@
 (function () {
-  function applyTreeCrossdart(github, crossdartBaseUrl, crossdart) {
+  function applyTreeCrossts(github, crosstsBaseUrl, crossts) {
     github.path.getRealRef(function (ref) {
-      var crossdartUrl = Path.join([crossdartBaseUrl, github.basePath, ref, "crossdart.json"]);
-      Request.getJson(crossdartUrl, function (json) {
-        crossdart.applyJson(json);
+      var crosstsUrl = Path.join([crosstsBaseUrl, ref, "crossts.json"]);
+      Request.getJson(crosstsUrl, function (json) {
+        crossts.applyJson(json);
       }, Errors.showUrlError);
     }, Errors.showTokenError);
   }
 
-  function applyPullSplitCrossdart(github, crossdartBaseUrl, crossdart) {
+  function applyPullSplitCrossts(github, crosstsBaseUrl, crossts) {
     github.path.getRealRefs(function (refs, repoNames) {
       var oldRef = refs[0];
       var newRef = refs[1];
-      var oldRepoName = repoNames[0];
-      var newRepoName = repoNames[1];
-      var crossdartUrlOld = Path.join([crossdartBaseUrl, oldRepoName, oldRef, "crossdart.json"]);
-      Request.getJson(crossdartUrlOld, function (oldJson) {
-        crossdart.applyJson(CROSSDART_PULL_OLD, oldJson, oldRef);
+      var crosstsUrlOld = Path.join([crosstsBaseUrl, oldRef, "crossts.json"]);
+      Request.getJson(crosstsUrlOld, function (oldJson) {
+        crossts.applyJson(CROSSDART_PULL_OLD, oldJson, oldRef);
       }, Errors.showUrlError);
-      var crossdartUrlNew = Path.join([crossdartBaseUrl, newRepoName, newRef, "crossdart.json"]);
-      Request.getJson(crossdartUrlNew, function (newJson) {
-        crossdart.applyJson(CROSSDART_PULL_NEW, newJson, newRef);
+      var crosstsUrlNew = Path.join([crosstsBaseUrl, newRef, "crossts.json"]);
+      Request.getJson(crosstsUrlNew, function (newJson) {
+        crossts.applyJson(CROSSDART_PULL_NEW, newJson, newRef);
       }, Errors.showUrlError);
     }, Errors.showTokenError);
   }
 
-  function applyPullUnifiedCrossdart(github, crossdartBaseUrl, crossdart) {
+  function applyPullUnifiedCrossts(github, crosstsBaseUrl, crossts) {
     github.path.getRealRefs(function (refs, repoNames) {
       var oldRef = refs[0];
       var newRef = refs[1];
-      var oldRepoName = repoNames[0];
-      var newRepoName = repoNames[1];
-      var crossdartUrlOld = Path.join([crossdartBaseUrl, oldRepoName, oldRef, "crossdart.json"]);
-      Request.getJson(crossdartUrlOld, function (oldJson) {
-        crossdart.applyJson(CROSSDART_PULL_OLD, oldJson, oldRef);
+      var crosstsUrlOld = Path.join([crosstsBaseUrl, oldRef, "crossts.json"]);
+      Request.getJson(crosstsUrlOld, function (oldJson) {
+        crossts.applyJson(CROSSDART_PULL_OLD, oldJson, oldRef);
       }, Errors.showUrlError);
-      var crossdartUrlNew = Path.join([crossdartBaseUrl, newRepoName, newRef, "crossdart.json"]);
-      Request.getJson(crossdartUrlNew, function (newJson) {
-        crossdart.applyJson(CROSSDART_PULL_NEW, newJson, newRef);
+      var crosstsUrlNew = Path.join([crosstsBaseUrl, newRef, "crossts.json"]);
+      Request.getJson(crosstsUrlNew, function (newJson) {
+        crossts.applyJson(CROSSDART_PULL_NEW, newJson, newRef);
       }, Errors.showUrlError);
     }, Errors.showTokenError);
   }
 
   function checkRef(index, github, baseUrl, ref, repoName, callback) {
-    var url = baseUrl + repoName + "/" + ref + "/crossdart.json";
+    var url = baseUrl + repoName + "/" + ref + "/crossts.json";
     Request.head(url, function () {
       Status.show(index, ref, "done");
       callback();
@@ -57,7 +53,7 @@
           }, 1000);
         }
       }, function () {
-        Request.post("https://metadata.crossdart.info/analyze", {
+        Request.post("https://metadata.crossts.info/analyze", {
           url: "https://github.com/" + repoName,
           sha: ref,
           token: Github.token
@@ -70,21 +66,21 @@
     });
   }
 
-  function fetchMetadataUrl(shouldReuseCrossdart) {
+  function fetchMetadataUrl(shouldReuseCrossts) {
     var github = new Github();
-    var baseUrl = "https://www.crossdart.info/metadata/";
+    var baseUrl = "https://www.crossts.info/metadata/";
     if (github.type === Github.PULL_REQUEST) {
       github.path.getRealRefs(function (refs, repoNames) {
         var isOneDone = false;
         checkRef(0, github, baseUrl, refs[0], repoNames[0], function () {
           if (isOneDone) {
-            applyCrossdart(baseUrl, shouldReuseCrossdart);
+            applyCrossts(baseUrl, shouldReuseCrossts);
           }
           isOneDone = true;
         });
         checkRef(1, github, baseUrl, refs[1], repoNames[1], function () {
           if (isOneDone) {
-            applyCrossdart(baseUrl, shouldReuseCrossdart);
+            applyCrossts(baseUrl, shouldReuseCrossts);
           }
           isOneDone = true;
         });
@@ -92,54 +88,54 @@
     } else {
       github.path.getRealRef(function (ref) {
         checkRef(0, github, baseUrl, ref, github.basePath, function () {
-          applyCrossdart(baseUrl, shouldReuseCrossdart);
+          applyCrossts(baseUrl, shouldReuseCrossts);
         });
       });
     }
   }
 
-  var crossdart;
-  function applyCrossdart(crossdartBaseUrl, shouldReuseCrossdart) {
+  var crossts;
+  function applyCrossts(crosstsBaseUrl, shouldReuseCrossts) {
     if (enabled) {
-      if (!crossdartBaseUrl || crossdartBaseUrl.toString().trim() === "") {
+      if (!crosstsBaseUrl || crosstsBaseUrl.toString().trim() === "") {
         fetchMetadataUrl();
       } else {
         var github = new Github();
         if (Github.isTree()) {
-          if (!shouldReuseCrossdart || !crossdart) {
-            crossdart = new CrossdartTree(github);
+          if (!shouldReuseCrossts || !crossts) {
+            crossts = new CrosstsTree(github);
           }
-          applyTreeCrossdart(github, crossdartBaseUrl, crossdart);
+          applyTreeCrossts(github, crosstsBaseUrl, crossts);
         } else if (Github.isPullSplit()) {
-          if (!shouldReuseCrossdart || !crossdart) {
-            crossdart = new CrossdartPullSplit(github);
+          if (!shouldReuseCrossts || !crossts) {
+            crossts = new CrosstsPullSplit(github);
           }
-          applyPullSplitCrossdart(github, crossdartBaseUrl, crossdart);
+          applyPullSplitCrossts(github, crosstsBaseUrl, crossts);
         } else if (Github.isPullUnified()) {
-          if (!shouldReuseCrossdart || !crossdart) {
-            crossdart = new CrossdartPullUnified(github);
+          if (!shouldReuseCrossts || !crossts) {
+            crossts = new CrosstsPullUnified(github);
           }
-          applyPullUnifiedCrossdart(github, crossdartBaseUrl, crossdart);
+          applyPullUnifiedCrossts(github, crosstsBaseUrl, crossts);
         }
       }
     }
   }
 
-  chrome.extension.sendMessage({crossdart: {action: 'initPopup'}});
+  chrome.extension.sendMessage({crossts: {action: 'initPopup'}});
 
   var jsonUrl;
   var enabled;
   chrome.runtime.onMessage.addListener(function (request) {
-    if (request.crossdart) {
-      if (request.crossdart.action === 'popupInitialized' || request.crossdart.action === 'apply') {
-        window.Github.token = request.crossdart.token;
-        jsonUrl = request.crossdart.jsonUrl;
-        enabled = request.crossdart.enabled;
+    if (request.crossts) {
+      if (request.crossts.action === 'popupInitialized' || request.crossts.action === 'apply') {
+        window.Github.token = request.crossts.token;
+        jsonUrl = request.crossts.jsonUrl;
+        enabled = request.crossts.enabled;
         if (enabled) {
-          applyCrossdart(jsonUrl, request.crossdart.action === 'apply');
+          applyCrossts(jsonUrl, request.crossts.action === 'apply');
         }
-      } else if (request.crossdart.action === 'tokenLink') {
-        location.href = request.crossdart.url;
+      } else if (request.crossts.action === 'tokenLink') {
+        location.href = request.crossts.url;
       }
     }
   });
@@ -151,7 +147,7 @@
     condition = condition || (oldPath !== newPath && Path.isTree(newPath));
     condition = condition || (!Path.isPull(oldPath) && Path.isPull(newPath));
     if (condition) {
-      applyCrossdart(jsonUrl);
+      applyCrossts(jsonUrl);
     }
   });
 
@@ -159,15 +155,16 @@
     var className = e.target.className;
     if (className.includes("octicon-unfold") || className.includes("diff-expander")) {
       setTimeout(function () {
-        applyCrossdart(jsonUrl, true);
+        applyCrossts(jsonUrl, true);
       }, 500);
     }
   });
 
   var tooltip;
   document.addEventListener("click", function (e) {
-    if (e.target.className == "crossdart-declaration") {
-      var content = declarationTooltipContent(e.target);
+    const element = findDeclarationElement(e.target);
+    if (element != null) {
+      var content = declarationTooltipContent(element);
       if (tooltip) {
         tooltip.destroy();
       }
@@ -188,9 +185,9 @@
     var references = JSON.parse(element.attributes["data-references"].value);
     var ref = element.attributes["data-ref"].value;
     var div = document.createElement("div");
-    div.className = "crossdart-declaration--contents";
+    div.className = "crossts-declaration--contents";
     var label = document.createElement("div");
-    label.className = "crossdart-declaration--contents--label";
+    label.className = "crossts-declaration--contents--label";
     label.appendChild(document.createTextNode("Usages:"));
     div.appendChild(label);
     var ul = document.createElement("ul");
@@ -205,6 +202,16 @@
     });
     div.appendChild(ul);
     return div;
+  }
+
+  function findDeclarationElement(element) {
+    while (element.parentNode != null) {
+      if (element.className.indexOf("crossts-declaration") !== -1) {
+        return element;
+      }
+      element = element.parentNode;
+    }
+    return null;
   }
 
 }());

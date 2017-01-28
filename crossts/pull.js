@@ -2,7 +2,7 @@
   window.CROSSDART_PULL_OLD = "old";
   window.CROSSDART_PULL_NEW = "new";
 
-  var CrossdartPull = function (github) {
+  var CrosstsPull = function (github) {
     this.github = github;
     this.handledLinesByFiles = {};
 
@@ -74,8 +74,8 @@
     };
   };
 
-  window.CrossdartPullSplit = function (github) {
-    CrossdartPull.apply(this, [github]);
+  window.CrosstsPullSplit = function (github) {
+    CrosstsPull.apply(this, [github]);
 
     this._getLineElement = function (type, file, line) {
       var fileHeader = document.querySelector("#files_bucket .file-header[data-path='" + file + "']");
@@ -96,8 +96,8 @@
     };
   };
 
-  window.CrossdartPullUnified = function (github) {
-    CrossdartPull.apply(this, [github]);
+  window.CrosstsPullUnified = function (github) {
+    CrosstsPull.apply(this, [github]);
 
     this._getLineElement = function (type, file, line) {
       var fileHeader = document.querySelector("#files_bucket .file-header[data-path='" + file + "']");
