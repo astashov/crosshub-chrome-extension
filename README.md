@@ -19,7 +19,7 @@ So, this is the solution, which allows you to control how you going to analyze t
 
 ## Demo
 
-[Here](https://raw.github.com/astashov/vim-ruby-debugger/master/demo.mp4) (16MB)
+[Here](https://raw.github.com/astashov/crosshub-chrome-extension/master/demo.mp4) (16MB)
 
 ## Installation
 
