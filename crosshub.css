@@ -4,11 +4,13 @@
   border-bottom: 1px solid #e4e4e4;
 }
 
-.crosshub-link__external {
+.crosshub-link__external,
+.crosshub-declaration--contents--link__external {
   position: relative;
 }
 
-.crosshub-link__external:hover::before {
+.crosshub-link__external:hover::before,
+.crosshub-declaration--contents--link__external:hover::before {
   content: '⇗';
   position: absolute;
   top: -9px;

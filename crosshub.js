@@ -193,9 +193,16 @@
     var ul = document.createElement("ul");
     references.forEach(function (reference) {
       var a = document.createElement("a");
+      a.classList.add("crosshub-declaration--contents--link");
       var href = new TreePath(new Github(), ref, reference.remotePath).absolutePath();
+      if (reference.remotePath.match(/^#/)) {
+        href = reference.remotePath;
+      } else {
+        a.classList.add("crosshub-declaration--contents--link__external");
+        href = new TreePath(new Github(), ref, reference.remotePath).absolutePath();
+      }
       a.setAttribute("href", href);
-      a.appendChild(document.createTextNode(reference.remotePath));
+      a.appendChild(document.createTextNode(reference.name || reference.remotePath));
       var li = document.createElement("li");
       li.appendChild(a);
       ul.appendChild(li);

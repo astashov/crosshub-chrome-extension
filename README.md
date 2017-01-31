@@ -6,13 +6,22 @@ You can take it there:
 
 [https://chrome.google.com/webstore/detail/crosshub-chrome-extensio/jmdjoliiaibifkklhipgmnciiealomhd](https://chrome.google.com/webstore/detail/crosshub-chrome-extensio/jmdjoliiaibifkklhipgmnciiealomhd)
 
+## Why?
+
+Why to make it, if there's [SourceGraph](https://sourcegraph.com/), which is more advanced in some aspects (like, it has docs on mouse hover, etc), actively developed, etc?
+SourceGraph is indeed cool, but I missed some things there, like:
+
+* It usually tries to get your to their site. I always want to stay on Github.
+* The biggest use for me is code navigation during code reviews. So, the support in Pull Requests should be first-class, and preferably, when I go to definitions and usages, I want to stay there, at the same Pull Request page, just scrolling to various parts of it, if possible. I didn't find that in SourceGraph.
+* And the main reason - SourceGraphs has to clone your repo on their servers to analyze it, and I'm really paranoid about it (and I bet my company wouldn't be happy to know I shared the source code with somebody except Github :)).
+
+So, this is the solution, which allows you to control how you going to analyze the project (on your build servers, CI, or something like that), it's fully open source, your code doesn't go anywhere. Give it a try, it just changes the way you do the code reviews, and in a good way!
+
 ## Demo
 
-[Here](https://www.crosshub.info/demo.html) (1.7MB)
+[Here](https://raw.github.com/astashov/vim-ruby-debugger/master/demo.mp4) (16MB)
 
 ## Installation
-
-### More complicated, but private and secure way (for super private projects)
 
 To make this extension work, you need to generate crosshub.json files for each git sha,
 and then put them somewhere publicly accessible (on your S3, for example). Github tree views
@@ -24,7 +33,7 @@ So, to make it work:
 Install 'crossts' npm package:
 
 ```bash
-$ npm install crossts
+$ npm install -g crossts
 ```
 
 and then run as
@@ -58,10 +67,10 @@ You probably may want to create a separate bucket on S3 for crosshub metadata fi
 </CORSConfiguration>
 ```
 
-To deliver your metadata files to S3, you can use official `aws` tool. Then, you can run:
+To deliver your metadata files to S3, you can use the official `aws` tool. Then, you can run:
 
 ```bash
-$ aws s3 cp - s3://my_bucket/project_name/47811d652c29053934ce448668e39728edf3a412/crosshub.json --acl public-read
+$ aws s3 cp crosshub.json s3://my_bucket/project_name/47811d652c29053934ce448668e39728edf3a412/crosshub.json --acl public-read
 ```
 
 The structure of the URL on S3 is important. It should always end with the git sha and `crosshub.json`.
@@ -69,7 +78,7 @@ Like above, the URL ends with `47811d652c29053934ce448668e39728edf3a412/crosshub
 
 #### Integrating with Travis CI
 
-Doing all the uploads to S3 manually is very cumbersome, so better to use some machinery, like CI or build server, to do that stuff for you, for example Travis CI. Here's how the configuration could look like:
+Doing all the uploads to S3 manually is very cumbersome, so better to use some machinery, like CI or build server, to do that stuff for you - for example, Travis CI. Here's how the configuration could look like:
 
 `.travis.yml` file:
 
@@ -77,32 +86,38 @@ Doing all the uploads to S3 manually is very cumbersome, so better to use some m
 language: node_js
 install:
   # Here are other stuff to install
-  - travis_retry sudo apt-get install --yes aws
+  - pip install --user awscli
+  - npm install -g crossts
 # ...
 # Other sections if needed
 # ...
 after_success:
-  - tool/crosshub_runner
+  - scripts/crosshub.sh
 ```
 
-`tool/crosshub_runner` file:
+`scripts/crosshub.sh` file:
 
 ```bash
-#!/bin/bash
-#
-# This script is invoked by Travis CI to generate Crosshub metadata for the Crosshub Chrome extension
+#!/usr/bin/env bash
+
+set -e
+
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]
 then
-  CROSSDART_HASH="${TRAVIS_COMMIT_RANGE#*...}"
+  CROSSHUB_HASH="${TRAVIS_COMMIT_RANGE#*...}"
 else
-  CROSSDART_HASH="${TRAVIS_COMMIT}"
+  CROSSHUB_HASH="${TRAVIS_COMMIT}"
 fi
-echo "Installing crosshub"
-pub global activate crosshub
-echo "Generating metadata for crosshub"
-pub global run crosshub --input=. --dart-sdk=$DART_SDK
-echo "Copying the crosshub json file to S3 ($CROSSDART_HASH)"
-s3cmd -P -c ./.s3cfg put ./crosshub.json s3://my-bucket/crosshub/my-github-name/my-project/$CROSSDART_HASH/crosshub.json
+
+echo "Building JSON file"
+find src test \( -name "*.ts" -o -name "*.tsx" \) -type f -exec crossts {} + | gzip -c > crosshub.json
+
+export AWS_ACCESS_KEY_ID=aws_access_key_id
+export AWS_SECRET_ACCESS_KEY=aws_secret_access_key
+export AWS_DEFAULT_REGION=us-east-1
+
+echo "Uploading to S3"
+aws s3 cp crosshub.json s3://your_bucket/your_app/$CROSSHUB_HASH/crosshub.json --acl public-read --content-encoding 'gzip'
 ```
 
 Now, every time somebody pushes to 'master', after Travis run, I'll have hyperlinked code of my project on Github.

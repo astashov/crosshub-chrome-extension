@@ -65,7 +65,11 @@ function applyEntities(github, ref, content, entities, hrefCallback) {
           var cssClass = "crosshub-link" + (!isInternal ? ' crosshub-link__external' : '');
           newLineContent += "<a href='" + href + "' class='" + cssClass + "'>";
         } else if (entity.type == "declarations") {
-          var references = JSON.stringify(entity.references);
+          var references = JSON.stringify(
+              entity.references.map(function (ref) {
+                return {name: ref.remotePath, remotePath: hrefCallback(ref)};
+              })
+          );
           newLineContent += "<span class='crosshub-declaration' data-references='" + references + "' data-ref='" + ref + "'>";
         }
         var end = entity.offset + entity.length;
