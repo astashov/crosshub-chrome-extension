@@ -4,7 +4,7 @@ This extension adds "Go to definition" and "Find usages" functionality to TypeSc
 to the tree views and pull requests.
 You can take it there:
 
-[https://chrome.google.com/webstore/detail/crosshub-chrome-extensio/jmdjoliiaibifkklhipgmnciiealomhd](https://chrome.google.com/webstore/detail/crosshub-chrome-extensio/jmdjoliiaibifkklhipgmnciiealomhd)
+[https://chrome.google.com/webstore/detail/crosshub-chrome-extension/ocdjcfgmfcjnhncepgdlgnkbkgjkdakl](https://chrome.google.com/webstore/detail/crosshub-chrome-extension/ocdjcfgmfcjnhncepgdlgnkbkgjkdakl)
 
 ## Why?
 
@@ -127,7 +127,7 @@ How cool is that! :)
 
 ## Setting up the Crosshub Chrome extension:
 
-After installing [Crosshub Chrome Extension](https://chrome.google.com/webstore/detail/crosshub-chrome-extensio/jmdjoliiaibifkklhipgmnciiealomhd), you'll see a little "XD" icon in Chrome's URL bar on Github pages.
+After installing [Crosshub Chrome Extension](https://chrome.google.com/webstore/detail/crosshub-chrome-extension/ocdjcfgmfcjnhncepgdlgnkbkgjkdakl), you'll see a little "XHub" icon in Chrome's URL bar on Github pages.
 If you click to it, you'll see a little popup, where you can turn Crosshub on for the current project, and also
 specify the URL where it should get the analysis data from.
 You only should provide a base for this URL, the extension will later append git sha and 'crosshub.json' to it. I.e. if you specify URL in this field like:

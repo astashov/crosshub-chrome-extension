@@ -48,3 +48,5 @@ s3_deployer_config.rb
 
 config.yaml
 credentials.yaml
+
+Archive.zip
