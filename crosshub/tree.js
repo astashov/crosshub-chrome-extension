@@ -13,7 +13,7 @@
         if (this.handledLines.indexOf(line) === -1) {
           var entities = entitiesByLines[line];
           entities.sort(function (a, b) {
-            return a.offset - b.offset;
+            return a.offset === b.offset ? (a.type === "references" ? -1 : 1) : a.offset - b.offset;
           });
           var that = this;
           var content = getLineContent(line);

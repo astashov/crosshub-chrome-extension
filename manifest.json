@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "CrossHub Chrome Extension",
-  "version": "0.1.0",
+  "version": "0.1.1",
 
   "description": "Adds 'Go to definition' and 'Find Usages' functionality to TypeScript projects on Github",
 
