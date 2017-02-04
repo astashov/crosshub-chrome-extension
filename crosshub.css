@@ -76,6 +76,67 @@
   transform: translateZ(0);
 }
 
+.crosshub-error {
+  position: fixed;
+  top: 60px;
+  right: 10px;
+  width: 50%;
+  text-align: left;
+  font-size: 14px;
+}
+
+.crosshub-error--icon {
+  border: 1px solid red;
+  background: #ffd1ca;
+  border-radius: 20px;
+  width: 40px;
+  height: 40px;
+  top: 0px;
+  right: 0px;
+  position: absolute;
+  cursor: pointer;
+  text-align: center;
+}
+
+.crosshub-error--icon--exclamation {
+  position: absolute;
+  top: 5px;
+  width: 100%;
+  text-align: center;
+  line-height: 14px;
+}
+
+.crosshub-error--icon--label {
+  position: absolute;
+  font-size: 8px;
+  width: 100%;
+  top: 19px;
+  left: 0;
+}
+
+.crosshub-error--content {
+  border: 1px solid red;
+  background: #ffd1ca;
+  border-radius: 2px;
+  width: 100%;
+  top: 0px;
+  right: 0px;
+  position: absolute;
+  font-size: 11px;
+  padding: 1em 2em;
+}
+
+.crosshub-error--close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: red;
+  font-size: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 .crosshub-loader:before {
   width: 50%;
   height: 50%;

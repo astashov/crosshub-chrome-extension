@@ -29,26 +29,48 @@
   };
 
   function showErrorMessage(message) {
-    var element = document.querySelector("#crosshub-error");
-    if (element) {
-      element.parentNode.removeChild(element);
+    var errorMessage = document.querySelector("#crosshub-error");
+    if (errorMessage) {
+      errorMessage.parentNode.removeChild(errorMessage);
     }
-    element = document.createElement("div");
-    element.setAttribute("style",
-       "position: fixed; top: 0; left: 0; width: 100%; padding: 1em 10em; background: #FFD1CA; " +
-       "border-bottom: #C7786C 1px solid; z-index: 1000; " +
-       "text-align: center; font-size: 14px;");
-    element.setAttribute("id", "crosshub-error");
-    element.innerHTML = "Crosshub Chrome Extension error: " + message;
-    document.querySelector("body").appendChild(element);
+    errorMessage = document.createElement("div");
+    errorMessage.classList.add("crosshub-error");
+    errorMessage.setAttribute("id", "crosshub-error");
+
+    var errorMessageIcon = document.createElement("div");
+    errorMessageIcon.classList.add("crosshub-error--icon");
+
+    var errorMessageIconExclamation = document.createElement("div");
+    errorMessageIconExclamation.classList.add("crosshub-error--icon--exclamation");
+    errorMessageIconExclamation.textContent = "!";
+
+    var errorMessageIconLabel = document.createElement("div");
+    errorMessageIconLabel.classList.add("crosshub-error--icon--label");
+    errorMessageIconLabel.textContent = "XHUB";
+
+    var errorMessageContent = document.createElement("div");
+    errorMessageContent.classList.add("crosshub-error--content");
+    errorMessageContent.style.display = "none";
+    errorMessageContent.innerHTML = "Crosshub Chrome Extension error: " + message;
+
     var close = document.createElement("button");
-    close.setAttribute("style",
-       "position: absolute; top: 5px; right: 5px; color: red; font-size: 14px; background: none; border: none");
-    close.addEventListener("click", function () {
-      element.parentNode.removeChild(element);
-    });
+    close.classList.add("crosshub-error--close");
     close.textContent = "X";
-    element.appendChild(close);
+
+    close.addEventListener("click", function () {
+      errorMessage.parentNode.removeChild(errorMessage);
+    });
+
+    errorMessageIcon.addEventListener("click", function () {
+      errorMessageContent.style.display = "block";
+    });
+
+    document.body.appendChild(errorMessage);
+    errorMessage.appendChild(errorMessageIcon);
+    errorMessage.appendChild(errorMessageContent);
+    errorMessageIcon.appendChild(errorMessageIconExclamation);
+    errorMessageIcon.appendChild(errorMessageIconLabel);
+    errorMessageContent.appendChild(close);
   }
 
 }());
