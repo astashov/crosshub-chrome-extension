@@ -9,7 +9,7 @@
   }
 
   function applyPullSplitCrosshub(github, crosshubBaseUrl, crosshub) {
-    github.path.getRealRefs(function (refs, repoNames) {
+    github.path.getRealRefs(function (refs) {
       var oldRef = refs[0];
       var newRef = refs[1];
       var crosshubUrlOld = Path.join([crosshubBaseUrl, oldRef, "crosshub.json"]);
@@ -24,7 +24,7 @@
   }
 
   function applyPullUnifiedCrosshub(github, crosshubBaseUrl, crosshub) {
-    github.path.getRealRefs(function (refs, repoNames) {
+    github.path.getRealRefs(function (refs) {
       var oldRef = refs[0];
       var newRef = refs[1];
       var crosshubUrlOld = Path.join([crosshubBaseUrl, oldRef, "crosshub.json"]);
@@ -38,85 +38,25 @@
     }, Errors.showTokenError);
   }
 
-  function checkRef(index, github, baseUrl, ref, repoName, callback) {
-    var url = baseUrl + repoName + "/" + ref + "/crosshub.json";
-    Request.head(url, function () {
-      Status.show(index, ref, "done");
-      callback();
-    },
-    function () {
-      Request.get(baseUrl + repoName + "/" + ref + "/status.txt", function (status) {
-        Status.show(index, ref, status);
-        if (status !== "error") {
-          setTimeout(function () {
-            checkRef(index, github, baseUrl, ref, repoName, callback);
-          }, 1000);
-        }
-      }, function () {
-        Request.post("https://metadata.crosshub.info/analyze", {
-          url: "https://github.com/" + repoName,
-          sha: ref,
-          token: Github.token
-        }, function () {
-          setTimeout(function () {
-            checkRef(index, github, baseUrl, ref, repoName, callback);
-          }, 1000);
-        });
-      });
-    });
-  }
-
-  function fetchMetadataUrl(shouldReuseCrosshub) {
-    var github = new Github();
-    var baseUrl = "https://www.crosshub.info/metadata/";
-    if (github.type === Github.PULL_REQUEST) {
-      github.path.getRealRefs(function (refs, repoNames) {
-        var isOneDone = false;
-        checkRef(0, github, baseUrl, refs[0], repoNames[0], function () {
-          if (isOneDone) {
-            applyCrosshub(baseUrl, shouldReuseCrosshub);
-          }
-          isOneDone = true;
-        });
-        checkRef(1, github, baseUrl, refs[1], repoNames[1], function () {
-          if (isOneDone) {
-            applyCrosshub(baseUrl, shouldReuseCrosshub);
-          }
-          isOneDone = true;
-        });
-      });
-    } else {
-      github.path.getRealRef(function (ref) {
-        checkRef(0, github, baseUrl, ref, github.basePath, function () {
-          applyCrosshub(baseUrl, shouldReuseCrosshub);
-        });
-      });
-    }
-  }
-
   var crosshub;
   function applyCrosshub(crosshubBaseUrl, shouldReuseCrosshub) {
     if (enabled) {
-      if (!crosshubBaseUrl || crosshubBaseUrl.toString().trim() === "") {
-        fetchMetadataUrl();
-      } else {
-        var github = new Github();
-        if (Github.isTree()) {
-          if (!shouldReuseCrosshub || !crosshub) {
-            crosshub = new CrosshubTree(github);
-          }
-          applyTreeCrosshub(github, crosshubBaseUrl, crosshub);
-        } else if (Github.isPullSplit()) {
-          if (!shouldReuseCrosshub || !crosshub) {
-            crosshub = new CrosshubPullSplit(github);
-          }
-          applyPullSplitCrosshub(github, crosshubBaseUrl, crosshub);
-        } else if (Github.isPullUnified()) {
-          if (!shouldReuseCrosshub || !crosshub) {
-            crosshub = new CrosshubPullUnified(github);
-          }
-          applyPullUnifiedCrosshub(github, crosshubBaseUrl, crosshub);
+      var github = new Github();
+      if (Github.isTree()) {
+        if (!shouldReuseCrosshub || !crosshub) {
+          crosshub = new CrosshubTree(github);
         }
+        applyTreeCrosshub(github, crosshubBaseUrl, crosshub);
+      } else if (Github.isPullSplit()) {
+        if (!shouldReuseCrosshub || !crosshub) {
+          crosshub = new CrosshubPullSplit(github);
+        }
+        applyPullSplitCrosshub(github, crosshubBaseUrl, crosshub);
+      } else if (Github.isPullUnified()) {
+        if (!shouldReuseCrosshub || !crosshub) {
+          crosshub = new CrosshubPullUnified(github);
+        }
+        applyPullUnifiedCrosshub(github, crosshubBaseUrl, crosshub);
       }
     }
   }
