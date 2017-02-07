@@ -21,6 +21,17 @@ So, this is the solution, which allows you to control how you going to analyze t
 
 [Here](https://raw.github.com/astashov/crosshub-chrome-extension/master/demo.mp4) (16MB)
 
+## Give it a try
+
+* Install the extension
+* Go to https://github.com/typeorm/typeorm/pull/178/files
+* Click on XHub extension icon at the right of the URL bar
+* Check "Enable Crosshub for this project"
+* In the first field, enter "https://astashov.s3.amazonaws.com/typeorm"
+* Refresh the page
+
+You should see the hyperlinked code now
+
 ## Installation
 
 To make this extension work, you need to generate crosshub.json files for each git sha,
